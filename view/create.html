@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Tambah Transaksi</h1>
-        <form action="/create" method="POST">
+        <form action="/create" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="jumlah" class="form-label">Jumlah (Rp)</label>
                 <input type="number" class="form-control" id="jumlah" name="jumlah" required>
@@ -32,6 +32,10 @@
             <div class="mb-3">
                 <label for="catatan" class="form-label">Catatan</label>
                 <textarea class="form-control" id="catatan" name="catatan"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="image_path" class="form-label">Upload Bukti Gambar (Opsional)</label>
+                <input type="file" class="form-control" id="image_path" name="image_path" accept="image/*">
             </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="/" class="btn btn-secondary">Batal</a>

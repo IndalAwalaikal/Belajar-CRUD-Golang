@@ -7,6 +7,8 @@ import (
 	"keuangan/view"
 	"net/http"
 	"strconv"
+	"io"
+	"os"
 )
 
 func ShowHtml(db *sql.DB) http.HandlerFunc {
@@ -40,19 +42,40 @@ func CreateTransaksi(db *sql.DB) http.HandlerFunc {
 				panic(err)
 			}
 
+			file, handler, err := r.FormFile("image_path")
+			if err != nil {
+				panic(err)
+			}
+			defer file.Close()
+
+			filePath := "images/" + handler.Filename
+			dst, err := os.Create(filePath)
+			if err != nil {
+				panic(err)
+			}
+			defer dst.Close()
+
+			_, err = io.Copy(dst, file)
+			if err != nil {
+				panic(err)
+			}
+
 			transaksi := model.Transaction{
-				Jumlah: jumlah,
-				Kategori: kategori,
-				Tanggal: tanggal,
-				Jenis: jenis,
-				Catatan: catatan,
+				Jumlah:     jumlah,
+				Kategori:   kategori,
+				Tanggal:    tanggal,
+				Jenis:      jenis,
+				Catatan:    catatan,
+				Image_path: filePath,
 			}
 			err = transaksi.CreateTransaksi(db)
 			if err != nil {
 				panic(err)
 			}
 			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
 		}
+
 		tmpl, err := template.ParseFiles("view/create.html")
 		if err != nil {
 			panic(err)
@@ -60,6 +83,7 @@ func CreateTransaksi(db *sql.DB) http.HandlerFunc {
 		tmpl.Execute(w, nil)
 	}
 }
+
 
 func ReadAllTransaksi(db *sql.DB) {
 	transaksi := model.Transaction{}
@@ -91,6 +115,31 @@ func UpdateTransaksi(db *sql.DB) http.HandlerFunc {
 				panic(err)
 			}
 
+			transaksiLama := model.Transaction{}
+			existing, err := transaksiLama.ReadTransaksiById(db, id_int)
+			if err != nil {
+				panic(err)
+			}
+
+			imagePath := existing.Image_path 
+
+			file, handler, err := r.FormFile("image_path")
+			if err == nil {
+				defer file.Close()
+
+				imagePath = "images/" + handler.Filename
+				dst, err := os.Create(imagePath)
+				if err != nil {
+					panic(err)
+				}
+				defer dst.Close()
+
+				_, err = io.Copy(dst, file)
+				if err != nil {
+					panic(err)
+				}
+			}
+
 			transaksi := model.Transaction{
 				IdTransaksi: id_int,
 				Jumlah:      jumlah,
@@ -98,7 +147,9 @@ func UpdateTransaksi(db *sql.DB) http.HandlerFunc {
 				Tanggal:     tanggal,
 				Jenis:       jenis,
 				Catatan:     catatan,
+				Image_path:  imagePath,
 			}
+
 			err = transaksi.UpdateTransaksi(db)
 			if err != nil {
 				panic(err)
@@ -121,7 +172,6 @@ func UpdateTransaksi(db *sql.DB) http.HandlerFunc {
 }
 
 func DeleteTransaksi(db *sql.DB) http.HandlerFunc {
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		id_string := r.URL.Query().Get("id_transaksi")
 		id_int, err := strconv.Atoi(id_string)

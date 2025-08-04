@@ -11,11 +11,12 @@ type Transaction struct {
 	Kategori    string
 	Tanggal     string
 	Jenis       string
-	Catatan     string 
+	Catatan     string
+	Image_path  string 
 }
 
 func (t Transaction) CreateTransaksi(db *sql.DB) error {
-	_, err := db.Exec("INSERT INTO transaksi (jumlah, kategori, tanggal, jenis, catatan) VALUES (?, ?, ?, ?, ?)", t.Jumlah, t.Kategori, t.Tanggal, t.Jenis, t.Catatan)
+	_, err := db.Exec("INSERT INTO transaksi (jumlah, kategori, tanggal, jenis, catatan, image_path) VALUES (?, ?, ?, ?, ?, ?)", t.Jumlah, t.Kategori, t.Tanggal, t.Jenis, t.Catatan, t.Image_path)
 	if err != nil {
 		return err
 	}
@@ -23,13 +24,13 @@ func (t Transaction) CreateTransaksi(db *sql.DB) error {
 }
 
 func (t Transaction) ReadAllTransaksi(db *sql.DB) ([]Transaction, error) {
-	rows, err := db.Query("SELECT id_transaksi, jumlah, kategori, tanggal, jenis, catatan FROM transaksi")
+	rows, err := db.Query("SELECT id_transaksi, jumlah, kategori, tanggal, jenis, catatan, image_path FROM transaksi")
 	if err != nil {
 		return nil, err
 	}
 	transaksi := []Transaction{}
 	for rows.Next() {
-		err := rows.Scan(&t.IdTransaksi, &t.Jumlah, &t.Kategori, &t.Tanggal, &t.Jenis, &t.Catatan)
+		err := rows.Scan(&t.IdTransaksi, &t.Jumlah, &t.Kategori, &t.Tanggal, &t.Jenis, &t.Catatan, &t.Image_path)
 		if err != nil {
 			panic(err)
 		}
@@ -40,7 +41,7 @@ func (t Transaction) ReadAllTransaksi(db *sql.DB) ([]Transaction, error) {
 }
 
 func (t Transaction) UpdateTransaksi(db *sql.DB) error {
-	_, err := db.Exec("UPDATE transaksi SET jumlah = ?, kategori = ?, tanggal = ?, jenis = ?, catatan = ? WHERE id_transaksi = ?", t.Jumlah, t.Kategori, t.Tanggal, t.Jenis, t.Catatan, t.IdTransaksi)
+	_, err := db.Exec("UPDATE transaksi SET jumlah = ?, kategori = ?, tanggal = ?, jenis = ?, catatan = ?, image_path = ? WHERE id_transaksi = ?", t.Jumlah, t.Kategori, t.Tanggal, t.Jenis, t.Catatan, t.Image_path, t.IdTransaksi)
 	if err != nil {
 		panic(err)
 	}
@@ -57,8 +58,8 @@ func (t Transaction) DeleteTransaksi(db *sql.DB, id int) error {
 }
 
 func (t Transaction) ReadTransaksiById(db *sql.DB, id int) (Transaction, error) {
-	row := db.QueryRow("SELECT id_transaksi, jumlah, kategori, tanggal, jenis, catatan FROM transaksi WHERE id_transaksi = ?", id)
-	err := row.Scan(&t.IdTransaksi, &t.Jumlah, &t.Kategori, &t.Tanggal, &t.Jenis, &t.Catatan)
+	row := db.QueryRow("SELECT id_transaksi, jumlah, kategori, tanggal, jenis, catatan, image_path FROM transaksi WHERE id_transaksi = ?", id)
+	err := row.Scan(&t.IdTransaksi, &t.Jumlah, &t.Kategori, &t.Tanggal, &t.Jenis, &t.Catatan, &t.Image_path)
 	if err != nil {
 		panic(err)
 	}
