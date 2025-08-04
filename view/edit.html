@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Transaksi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Transaksi</h1>
+        <form action="/edit?id_transaksi={{.IdTransaksi}}" method="POST">
+            <div class="mb-3">
+                <label for="jumlah" class="form-label">Jumlah (Rp)</label>
+                <input type="number" class="form-control" id="jumlah" name="jumlah" value="{{.Jumlah}}" required>
+            </div>
+            <div class="mb-3">
+                <label for="kategori" class="form-label">Kategori</label>
+                <input type="text" class="form-control" id="kategori" name="kategori" value="{{.Kategori}}" required>
+            </div>
+            <div class="mb-3">
+                <label for="tanggal" class="form-label">Tanggal</label>
+                <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{.Tanggal}}" required>
+            </div>
+            <div class="mb-3">
+                <label for="jenis" class="form-label">Jenis</label>
+                <select class="form-select" id="jenis" name="jenis" required>
+                    <option value="Pemasukan" {{if eq .Jenis "Pemasukan"}}selected{{end}}>Pemasukan</option>
+                    <option value="Pengeluaran" {{if eq .Jenis "Pengeluaran"}}selected{{end}}>Pengeluaran</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="catatan" class="form-label">Catatan</label>
+                <textarea class="form-control" id="catatan" name="catatan">{{.Catatan}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <a href="/" class="btn btn-secondary">Batal</a>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
